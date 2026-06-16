@@ -15,6 +15,7 @@ const filterTags = document.querySelectorAll('.filter-tag');
 const refreshBtn = document.getElementById('refresh-btn');
 const refreshIcon = document.getElementById('refresh-icon');
 const refreshText = document.getElementById('refresh-text');
+const exportCsvBtn = document.getElementById('export-csv-btn');
 const lastUpdatedTimeEl = document.getElementById('last-updated-time');
 const tweetPanel = document.getElementById('tweet-panel');
 const tweetTextarea = document.getElementById('tweet-textarea');
@@ -54,6 +55,9 @@ function setupEventListeners() {
     refreshBtn.addEventListener('click', () => {
         fetchReleases(true);
     });
+
+    // Export CSV button
+    exportCsvBtn.addEventListener('click', exportToCSV);
 
     // Tweet panel close
     closeTweetPanelBtn.addEventListener('click', deselectUpdate);
@@ -396,4 +400,58 @@ function showToast(message, isError = false) {
     toastTimeout = setTimeout(() => {
         toastNotification.classList.add('hidden');
     }, 2500);
+}
+
+// Export visible updates to CSV
+function exportToCSV() {
+    if (allReleases.length === 0) {
+        showToast("No data available to export", true);
+        return;
+    }
+
+    const csvRows = [];
+    // CSV Header (escaping quotes)
+    csvRows.push(['Date', 'Type', 'Description', 'Tweet Text', 'Link'].map(val => `"${val.replace(/"/g, '""')}"`).join(','));
+
+    allReleases.forEach(release => {
+        if (!release.updates) return;
+        
+        release.updates.forEach(up => {
+            // Apply current filters
+            const matchesType = currentFilterType === 'all' || up.type.toLowerCase() === currentFilterType;
+            const matchesSearch = currentSearchQuery === '' || 
+                up.plain_text.toLowerCase().includes(currentSearchQuery) || 
+                up.type.toLowerCase().includes(currentSearchQuery) || 
+                release.date.toLowerCase().includes(currentSearchQuery);
+
+            if (matchesType && matchesSearch) {
+                const row = [
+                    release.date,
+                    up.type,
+                    up.plain_text,
+                    up.tweet_text,
+                    release.link
+                ].map(val => `"${val.replace(/"/g, '""')}"`).join(',');
+                csvRows.push(row);
+            }
+        });
+    });
+
+    if (csvRows.length <= 1) {
+        showToast("No updates match your current filters to export", true);
+        return;
+    }
+
+    // Use Blob and URL.createObjectURL to support large/UTF-8 data reliably
+    const blob = new Blob(["\uFEFF" + csvRows.join("\r\n")], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `bigquery_releases_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast(`Exported ${csvRows.length - 1} updates to CSV!`);
 }

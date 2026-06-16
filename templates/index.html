@@ -75,10 +75,16 @@
             </div>
             
             <div class="sidebar-footer">
-                <button class="btn btn-secondary w-full" id="refresh-btn">
-                    <i class="fa-solid fa-rotate" id="refresh-icon"></i>
-                    <span id="refresh-text">Refresh Feed</span>
-                </button>
+                <div class="sidebar-actions">
+                    <button class="btn btn-secondary" id="refresh-btn" style="flex: 1;">
+                        <i class="fa-solid fa-rotate" id="refresh-icon"></i>
+                        <span id="refresh-text">Refresh</span>
+                    </button>
+                    <button class="btn btn-secondary" id="export-csv-btn" style="flex: 1;" title="Export current filtered view to CSV">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
                 <div class="status-indicator">
                     <span class="dot green"></span>
                     <span id="last-updated-time">Checking for updates...</span>
