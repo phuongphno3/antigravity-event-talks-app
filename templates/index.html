@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Pulse</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Control Panel -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-glow"></div>
+                <i class="fa-solid fa-bolt brand-icon"></i>
+                <div>
+                    <h1>BQ Release Pulse</h1>
+                    <span class="subtitle">BigQuery Release Tracker</span>
+                </div>
+            </div>
+
+            <div class="search-filter-section">
+                <div class="control-group">
+                    <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> Search Updates</label>
+                    <input type="text" id="search-input" placeholder="Search keywords..." autocomplete="off">
+                </div>
+
+                <div class="control-group">
+                    <label><i class="fa-solid fa-filter"></i> Filter by Type</label>
+                    <div class="filter-tags">
+                        <button class="filter-tag active" data-type="all">All</button>
+                        <button class="filter-tag" data-type="feature">Features</button>
+                        <button class="filter-tag" data-type="issue">Issues</button>
+                        <button class="filter-tag" data-type="changed">Changed</button>
+                        <button class="filter-tag" data-type="deprecated">Deprecated</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Tweet Preview Panel -->
+            <div class="tweet-panel hidden" id="tweet-panel">
+                <div class="panel-header">
+                    <h3><i class="fa-brands fa-x-twitter"></i> Tweet Composer</h3>
+                    <button class="close-panel-btn" id="close-tweet-panel"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="tweet-box">
+                    <div class="tweet-user">
+                        <div class="avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                        <div class="user-meta">
+                            <span class="user-name">You</span>
+                            <span class="user-handle">@cloud_developer</span>
+                        </div>
+                    </div>
+                    <textarea id="tweet-textarea" readonly></textarea>
+                    <div class="tweet-footer">
+                        <span class="char-counter" id="char-counter">0 / 280</span>
+                        <div class="tweet-actions">
+                            <button class="btn btn-secondary btn-icon-only" id="copy-tweet-btn" title="Copy Tweet text">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                            <button class="btn btn-primary" id="publish-tweet-btn">
+                                <i class="fa-brands fa-x-twitter"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="refresh-btn">
+                    <i class="fa-solid fa-rotate" id="refresh-icon"></i>
+                    <span id="refresh-text">Refresh Feed</span>
+                </button>
+                <div class="status-indicator">
+                    <span class="dot green"></span>
+                    <span id="last-updated-time">Checking for updates...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Feed Area -->
+        <main class="feed-area">
+            <header class="feed-header">
+                <h2>Release Feed</h2>
+                <div class="feed-stats">
+                    <span class="stat-badge"><i class="fa-solid fa-calendar-days"></i> <span id="days-count">0</span> Days</span>
+                    <span class="stat-badge"><i class="fa-solid fa-list-check"></i> <span id="updates-count">0</span> Updates</span>
+                </div>
+            </header>
+
+            <div class="feed-loading" id="feed-loading">
+                <div class="spinner-wrapper">
+                    <div class="pulsing-glow"></div>
+                    <div class="spinner"></div>
+                </div>
+                <p>Syncing release feed...</p>
+            </div>
+
+            <div class="feed-empty hidden" id="feed-empty">
+                <i class="fa-solid fa-ghost empty-icon"></i>
+                <h3>No releases found</h3>
+                <p>Try resetting your filters or search keywords, or refresh the feed.</p>
+                <button class="btn btn-primary" id="empty-reset-btn">Reset Filters & Search</button>
+            </div>
+
+            <div class="feed-timeline" id="feed-timeline">
+                <!-- Timeline cards will be injected here dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification hidden" id="toast-notification">
+        <i class="fa-solid fa-circle-check toast-icon"></i>
+        <span class="toast-message" id="toast-message">Copied to clipboard!</span>
+    </div>
+
+    <!-- Main JavaScript file -->
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
