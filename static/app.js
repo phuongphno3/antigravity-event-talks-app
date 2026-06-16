@@ -17,6 +17,8 @@ const refreshIcon = document.getElementById('refresh-icon');
 const refreshText = document.getElementById('refresh-text');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const lastUpdatedTimeEl = document.getElementById('last-updated-time');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const themeToggleIcon = document.getElementById('theme-toggle-icon');
 const tweetPanel = document.getElementById('tweet-panel');
 const tweetTextarea = document.getElementById('tweet-textarea');
 const charCounter = document.getElementById('char-counter');
@@ -29,6 +31,7 @@ const toastMessageEl = document.getElementById('toast-message');
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     fetchReleases();
     setupEventListeners();
 });
@@ -58,6 +61,9 @@ function setupEventListeners() {
 
     // Export CSV button
     exportCsvBtn.addEventListener('click', exportToCSV);
+
+    // Theme toggle button
+    themeToggleBtn.addEventListener('click', toggleTheme);
 
     // Tweet panel close
     closeTweetPanelBtn.addEventListener('click', deselectUpdate);
@@ -454,4 +460,30 @@ function exportToCSV() {
     document.body.removeChild(link);
     
     showToast(`Exported ${csvRows.length - 1} updates to CSV!`);
+}
+
+// Theme Management
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        themeToggleIcon.className = 'fa-solid fa-moon';
+    } else {
+        document.body.classList.remove('light-mode');
+        themeToggleIcon.className = 'fa-solid fa-sun';
+    }
+}
+
+function toggleTheme() {
+    if (document.body.classList.contains('light-mode')) {
+        document.body.classList.remove('light-mode');
+        themeToggleIcon.className = 'fa-solid fa-sun';
+        localStorage.setItem('theme', 'dark');
+        showToast("Switched to Dark Mode 🌙");
+    } else {
+        document.body.classList.add('light-mode');
+        themeToggleIcon.className = 'fa-solid fa-moon';
+        localStorage.setItem('theme', 'light');
+        showToast("Switched to Light Mode ☀️");
+    }
 }
