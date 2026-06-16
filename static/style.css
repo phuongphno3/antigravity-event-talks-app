@@ -996,3 +996,17 @@ body.light-mode .avatar {
 body.light-mode .logo-glow {
     opacity: 0.15;
 }
+
+/* Highlighted Text */
+mark {
+    background: rgba(0, 242, 254, 0.25);
+    color: var(--primary);
+    border-radius: 2px;
+    padding: 0 2px;
+    font-weight: 500;
+}
+
+body.light-mode mark {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--clr-issue);
+}

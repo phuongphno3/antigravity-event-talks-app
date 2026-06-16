@@ -83,6 +83,25 @@ String.prototype.strip = function() {
     return this.trim().replace(/\s+/g, ' ');
 };
 
+// Safe HTML keyword highlighting helper
+function highlightHTML(html, query) {
+    if (!query) return html;
+    
+    // Escape regex characters
+    const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    
+    // Split by HTML tags and only run replacement on even nodes (text nodes)
+    const parts = html.split(/(<[^>]+>)/);
+    const highlightedParts = parts.map((part, index) => {
+        if (index % 2 === 0) {
+            return part.replace(regex, '<mark>$1</mark>');
+        }
+        return part;
+    });
+    return highlightedParts.join('');
+}
+
 // Fetch data from API
 async function fetchReleases(forceRefresh = false) {
     showLoading(true);
@@ -282,7 +301,7 @@ function renderTimeline() {
                 // Body row: HTML Content
                 const cardBody = document.createElement('div');
                 cardBody.className = 'card-body';
-                cardBody.innerHTML = up.body;
+                cardBody.innerHTML = highlightHTML(up.body, currentSearchQuery);
                 card.appendChild(cardBody);
                 
                 // Click handler to select card
